@@ -68,17 +68,27 @@ export class ExpirySession {
 export const isEmpty = (value: string | number | object): boolean => {
   if (value === null) {
     return true;
-  } else if (typeof value !== 'number' && value === '') {
+  } else if (typeof value !== "number" && value === "") {
     return true;
-  } else if (typeof value === 'undefined' || value === undefined) {
+  } else if (typeof value === "undefined" || value === undefined) {
     return true;
   } else if (
     value !== null &&
-    typeof value === 'object' &&
+    typeof value === "object" &&
     !Object.keys(value).length
   ) {
     return true;
   } else {
     return false;
   }
+};
+
+export const isFieldsInvalid = (obj: object) => {
+  let returnValue = false;
+
+  Object.values(obj).map((el: any) => {
+    if (isEmpty(el)) return (returnValue = true);
+  });
+
+  return returnValue;
 };
