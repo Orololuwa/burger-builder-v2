@@ -1,0 +1,33 @@
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AuthState } from "core/models/auth";
+import { tokenKey, ExpirySession } from "lib/utils";
+
+const initialState: AuthState = {
+  isLoggedIn: !ExpirySession.get(tokenKey),
+  loading: false,
+  error: "",
+};
+
+export const AuthSlice = createSlice({
+  name: "auth",
+  initialState,
+  reducers: {
+    loginBegin: (state: AuthState) => {
+      state.loading = true;
+      state.error = "";
+    },
+    loginSuccess: (state: AuthState, action: PayloadAction<boolean>) => {
+      state.loading = false;
+      state.isLoggedIn = action.payload;
+      state.error = "";
+    },
+    loginError: (state: AuthState, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+  },
+});
+
+export const actions = AuthSlice.actions;
+
+export default AuthSlice.reducer;
