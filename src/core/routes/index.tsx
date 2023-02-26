@@ -14,7 +14,7 @@ const routes: RouteObject[] = [
         <Home />
       </AuthGuard>
     ),
-    path: "/",
+    path: appRoutes.HOME,
   },
   {
     element: <SignInPage />,
