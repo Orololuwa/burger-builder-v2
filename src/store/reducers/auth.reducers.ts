@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AuthState } from "core/models/auth";
+import { AuthState } from "models/auth";
 import { tokenKey, ExpirySession } from "lib/utils";
 
 const initialState: AuthState = {
