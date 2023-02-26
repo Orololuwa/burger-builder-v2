@@ -3,7 +3,7 @@ import { AuthState } from "models/auth";
 import { tokenKey, ExpirySession } from "lib/utils";
 
 const initialState: AuthState = {
-  isLoggedIn: !ExpirySession.get(tokenKey),
+  isLoggedIn: !!ExpirySession.get(tokenKey),
   loading: false,
   error: "",
 };
