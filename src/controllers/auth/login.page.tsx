@@ -14,10 +14,11 @@ import {
 } from "@chakra-ui/react";
 import { useAppDispatch, useAppSelector } from "core/hooks/use-redux";
 import { AuthLocationState } from "models/auth";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { loginJWT } from "store/action-creators/auth.actions";
-import { ErrorToast } from "views/components/error";
+import { ErrorToast } from "core/components/error";
+import { isFieldsInvalid } from "lib/utils";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -32,6 +33,8 @@ export default function LoginPage() {
     const { name, value } = e.target;
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
+
+  const isDisabled = useCallback(() => isFieldsInvalid(state), [state]);
 
   const onLogin = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -96,6 +99,7 @@ export default function LoginPage() {
                   }}
                   onClick={onLogin}
                   isLoading={loading}
+                  isDisabled={isDisabled()}
                 >
                   Sign in
                 </Button>

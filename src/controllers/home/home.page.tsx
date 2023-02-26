@@ -1,6 +1,6 @@
 import { Box, Text, VStack, Code, Grid } from "@chakra-ui/react";
-import { ColorModeSwitcher } from "../../../ColorModeSwitcher";
-import { Logo } from "../../../Logo";
+import { ColorModeSwitcher } from "../../ColorModeSwitcher";
+import { Logo } from "../../Logo";
 
 const Home = () => {
   return (
