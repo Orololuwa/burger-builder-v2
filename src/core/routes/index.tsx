@@ -14,16 +14,16 @@ const routes: RouteObject[] = [
         <Home />
       </AuthGuard>
     ),
-    path: appRoutes.HOME,
+    path: appRoutes.HOME
   },
   {
     element: <SignInPage />,
-    path: appRoutes.SIGN_IN,
+    path: appRoutes.SIGN_IN
   },
   {
     element: <SignUpPage />,
-    path: appRoutes.SIGN_UP,
-  },
+    path: appRoutes.SIGN_UP
+  }
 ];
 
 export default routes;

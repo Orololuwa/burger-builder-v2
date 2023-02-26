@@ -3,7 +3,7 @@ import {
   keyframes,
   ImageProps,
   forwardRef,
-  usePrefersReducedMotion,
+  usePrefersReducedMotion
 } from "@chakra-ui/react";
 import logo from "./logo.svg";
 

@@ -10,7 +10,7 @@ export const ErrorToast = ({ error }: { error: string }) => {
       description: error,
       status: "error",
       position: "top",
-      variant: "subtle",
+      variant: "subtle"
     });
   }, [error]);
 
