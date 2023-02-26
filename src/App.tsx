@@ -1,13 +1,15 @@
 import * as React from "react";
 import { useRoutes } from "react-router-dom";
 import routes from "core/routes";
+import { ChakraProvider, theme } from "@chakra-ui/react";
+import { LoadingText } from "views/components/loading";
 
 export const App = () => {
   const routesHere = useRoutes(routes);
 
   return (
-    <React.Suspense fallback={<div>loading...</div>}>
-      {routesHere}
-    </React.Suspense>
+    <ChakraProvider theme={theme}>
+      <React.Suspense fallback={<LoadingText />}>{routesHere}</React.Suspense>
+    </ChakraProvider>
   );
 };

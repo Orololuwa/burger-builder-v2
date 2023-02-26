@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { authInstance } from "lib/config/axios.config";
+import { publicInstance } from "lib/config/axios.config";
 import { ILogin } from "models/auth";
 
 class AuthService {
@@ -9,7 +9,7 @@ class AuthService {
   }): Promise<AxiosResponse<ILogin>> {
     return new Promise(async (resolve, reject) => {
       try {
-        const res = await authInstance.post("/auth/login", body);
+        const res = await publicInstance.post("/auth/signin", body);
         resolve(res);
       } catch (err) {
         reject(err);

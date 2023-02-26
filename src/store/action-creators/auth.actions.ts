@@ -5,7 +5,7 @@ import { NavigateFunction } from "react-router-dom";
 import authService from "services/auth.service";
 import { actions } from "store/reducers/auth.reducers";
 
-export const login2FA = (
+export const loginJWT = (
   navigate: NavigateFunction,
   from: string,
   data: {

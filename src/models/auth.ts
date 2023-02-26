@@ -15,3 +15,9 @@ interface User {
   email: string;
   address: string;
 }
+
+export interface AuthLocationState {
+  from?: {
+    pathname?: string;
+  };
+}
