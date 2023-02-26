@@ -6,19 +6,20 @@ import {
   Input,
   Checkbox,
   Stack,
-  Link,
   Button,
   Heading,
   Text,
   useColorModeValue,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import { useAppDispatch, useAppSelector } from "core/hooks/use-redux";
 import { AuthLocationState } from "models/auth";
 import { useCallback, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { loginJWT } from "store/action-creators/auth.actions";
 import { ErrorToast } from "core/components/error";
 import { isFieldsInvalid } from "lib/utils";
+import { appRoutes } from "core/routes/routes";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -53,8 +54,7 @@ export default function LoginPage() {
           <Stack align={"center"}>
             <Heading fontSize={"4xl"}>Sign in to your account</Heading>
             <Text fontSize={"lg"} color={"gray.600"}>
-              to enjoy all of our cool <Link color={"blue.400"}>features</Link>{" "}
-              ✌️
+              to enjoy all of our cool features ✌️
             </Text>
           </Stack>
           <Box
@@ -89,7 +89,14 @@ export default function LoginPage() {
                   justify={"space-between"}
                 >
                   <Checkbox>Remember me</Checkbox>
-                  <Link color={"blue.400"}>Forgot password?</Link>
+                  <ChakraLink
+                    as={Link}
+                    to={appRoutes.SIGN_UP}
+                    color={"blue.400"}
+                    colorScheme="blue"
+                  >
+                    Create an account
+                  </ChakraLink>
                 </Stack>
                 <Button
                   bg={"blue.400"}
