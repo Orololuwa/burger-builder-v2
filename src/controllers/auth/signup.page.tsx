@@ -12,13 +12,49 @@ import {
   Heading,
   Text,
   useColorModeValue,
-  Link
+  Link as ChakraLink,
+  Select
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { AuthLocationState } from "models/auth";
+import { useAppDispatch, useAppSelector } from "core/hooks/use-redux";
+import { isFieldsInvalid } from "lib/utils";
+import { signUpJWT } from "store/action-creators/auth.actions";
+import { ErrorToast } from "core/components/error";
+import { appRoutes } from "core/routes/routes";
 
 export default function SignupCard() {
   const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as AuthLocationState)?.from?.pathname || "/";
+  const dispatch = useAppDispatch();
+  const { loading, error } = useAppSelector((state) => state.auth);
+  const [state, setState] = useState({
+    email: "",
+    password: "",
+    address: "",
+    name: "",
+    role: "user"
+  });
+
+  //
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setState((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const isDisabled = useCallback(() => isFieldsInvalid(state), [state]);
+
+  const onSignUp = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    dispatch(signUpJWT(navigate, from, state));
+  };
 
   return (
     <Flex
@@ -45,26 +81,53 @@ export default function SignupCard() {
           <Stack spacing={4}>
             <HStack>
               <Box>
-                <FormControl id="firstName" isRequired>
-                  <FormLabel>First Name</FormLabel>
-                  <Input type="text" />
+                <FormControl id="name" isRequired>
+                  <FormLabel>Name</FormLabel>
+                  <Input
+                    type="text"
+                    name="name"
+                    value={state.name}
+                    onChange={onChange}
+                  />
                 </FormControl>
               </Box>
               <Box>
-                <FormControl id="lastName">
-                  <FormLabel>Last Name</FormLabel>
-                  <Input type="text" />
+                <FormControl id="email" isRequired>
+                  <FormLabel>Email</FormLabel>
+                  <Input
+                    type="email"
+                    name="email"
+                    value={state.email}
+                    onChange={onChange}
+                  />
                 </FormControl>
               </Box>
             </HStack>
-            <FormControl id="email" isRequired>
-              <FormLabel>Email address</FormLabel>
-              <Input type="email" />
+            <FormControl id="addreess" isRequired>
+              <FormLabel>Address</FormLabel>
+              <Input
+                type="text"
+                name="address"
+                value={state.address}
+                onChange={onChange}
+              />
+            </FormControl>
+            <FormControl id="addreess">
+              <FormLabel>Role</FormLabel>
+              <Select name="role" value={state.role} onChange={onChange}>
+                <option value={"user"}>User</option>
+                <option value={"admin"}>Admin</option>
+              </Select>
             </FormControl>
             <FormControl id="password" isRequired>
               <FormLabel>Password</FormLabel>
               <InputGroup>
-                <Input type={showPassword ? "text" : "password"} />
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={state.password}
+                  onChange={onChange}
+                />
                 <InputRightElement h={"full"}>
                   <Button
                     variant={"ghost"}
@@ -86,18 +149,25 @@ export default function SignupCard() {
                 _hover={{
                   bg: "blue.500"
                 }}
+                isLoading={loading}
+                onClick={onSignUp}
+                isDisabled={isDisabled()}
               >
                 Sign up
               </Button>
             </Stack>
             <Stack pt={6}>
               <Text align={"center"}>
-                Already a user? <Link color={"blue.400"}>Login</Link>
+                Already a user?{" "}
+                <ChakraLink as={Link} to={appRoutes.SIGN_IN} color={"blue.400"}>
+                  Login
+                </ChakraLink>
               </Text>
             </Stack>
           </Stack>
         </Box>
       </Stack>
+      {ErrorToast({ error })}
     </Flex>
   );
 }

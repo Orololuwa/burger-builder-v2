@@ -17,6 +17,22 @@ class AuthService {
       }
     });
   }
+
+  async signUp(body: {
+    email: string;
+    password: string;
+    name: string;
+    address: string;
+  }): Promise<AxiosResponse<ILogin>> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const res = await publicInstance.post(apiRoutes.SIGN_UP, body);
+        resolve(res);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
 }
 
 export default new AuthService();

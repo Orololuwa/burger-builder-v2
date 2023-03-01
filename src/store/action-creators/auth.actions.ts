@@ -30,3 +30,31 @@ export const loginJWT = (
     }
   };
 };
+
+export const signUpJWT = (
+  navigate: NavigateFunction,
+  from: string,
+  data: {
+    email: string;
+    password: string;
+    name: string;
+    address: string;
+  }
+) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      dispatch(actions.loginBegin());
+
+      const res = await authService.signUp(data);
+
+      ExpirySession.set(tokenKey, res.data.access_token);
+
+      dispatch(actions.loginSuccess(true));
+      navigate(from, { replace: true });
+    } catch (err: any) {
+      const axiosError = err as AxiosError<{ message: string }>;
+      const msg = axiosError.response?.data?.message;
+      dispatch(actions.loginError(msg || "Error"));
+    }
+  };
+};
