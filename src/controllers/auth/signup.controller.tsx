@@ -30,7 +30,9 @@ export default function SignupCard() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const from = (location.state as AuthLocationState)?.from?.pathname || "/";
+  const from =
+    (location.state as AuthLocationState)?.from?.pathname ||
+    appRoutes.DASHBOARD;
   const dispatch = useAppDispatch();
   const { loading, error } = useAppSelector((state) => state.auth);
   const [state, setState] = useState({

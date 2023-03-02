@@ -1,7 +1,7 @@
 import { Box, Text, VStack, Code, Grid } from "@chakra-ui/react";
 import { Logo } from "../../Logo";
 
-const Home = () => {
+const Dashboard = () => {
   return (
     <Box textAlign="center" fontSize="xl">
       <Grid minH="100vh" p={3}>
@@ -16,4 +16,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Dashboard;
