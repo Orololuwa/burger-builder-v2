@@ -1,5 +1,6 @@
 import { Dispatch } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
+import { appRoutes } from "core/routes/routes";
 import { ExpirySession, tokenKey } from "lib/utils";
 import { NavigateFunction } from "react-router-dom";
 import authService from "services/auth.service";
@@ -55,6 +56,18 @@ export const signUpJWT = (
       const axiosError = err as AxiosError<{ message: string }>;
       const msg = axiosError.response?.data?.message;
       dispatch(actions.loginError(msg || "Error"));
+    }
+  };
+};
+
+export const logOut = (navigate: NavigateFunction) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      ExpirySession.clear();
+      dispatch(actions.logOut());
+      navigate(appRoutes.SIGN_IN, { replace: true });
+    } catch (err) {
+      throw err;
     }
   };
 };
