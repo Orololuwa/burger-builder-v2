@@ -2,6 +2,7 @@ import { RouteObject } from "react-router-dom";
 import AuthGuard from "core/guards/auth.guard";
 import { lazy } from "react";
 import { appRoutes } from "./routes";
+import DashboardLayout from "core/components/layout/dashboard-layout";
 
 const Home = lazy(() => import("controllers/home/home.page"));
 const SignInPage = lazy(() => import("controllers/auth/signin.page"));
@@ -11,10 +12,15 @@ const routes: RouteObject[] = [
   {
     element: (
       <AuthGuard>
-        <Home />
+        <DashboardLayout />
       </AuthGuard>
     ),
-    path: appRoutes.HOME
+    children: [
+      {
+        element: <Home />,
+        path: appRoutes.HOME
+      }
+    ]
   },
   {
     element: <SignInPage />,
