@@ -15,14 +15,17 @@ import {
   useColorModeValue,
   Stack,
   Text,
-  Icon
+  Icon,
+  Image
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import { ColorModeSwitcher } from "core/components/color-mode-switcher";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useMatch, useNavigate, useResolvedPath } from "react-router-dom";
 import { appRoutes } from "core/routes/routes";
-import { Logout } from "iconsax-react";
+import { LoginCurve, Logout } from "iconsax-react";
 import { useLogout } from "core/hooks/use-logout";
+import logo from "assets/logo.png";
+import { useAppSelector } from "core/hooks/use-redux";
 
 const Links = [
   {
@@ -39,23 +42,31 @@ const Links = [
   }
 ];
 
-const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
-  <ChakraLink
-    as={Link}
-    px={2}
-    py={1}
-    rounded={"md"}
-    _hover={{
-      textDecoration: "none",
-      bg: useColorModeValue("gray.200", "gray.700")
-    }}
-    to={to}
-  >
-    {children}
-  </ChakraLink>
-);
+const NavLink = ({ children, to }: { children: ReactNode; to: string }) => {
+  let resolved = useResolvedPath(to);
+  let match = useMatch({ path: resolved.pathname, end: true });
+
+  return (
+    <ChakraLink
+      as={Link}
+      px={2}
+      py={1}
+      rounded={"md"}
+      _hover={{
+        textDecoration: "none",
+        bg: useColorModeValue("gray.200", "gray.700")
+      }}
+      bg={match ? useColorModeValue("gray.200", "gray.700") : "initial"}
+      to={to}
+    >
+      {children}
+    </ChakraLink>
+  );
+};
 
 export default function HeaderNav() {
+  const [isLoggedIn] = useAppSelector((state) => [state.auth.isLoggedIn]);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const navigate = useNavigate();
@@ -73,8 +84,20 @@ export default function HeaderNav() {
           onClick={isOpen ? onClose : onOpen}
         />
         <HStack spacing={8} alignItems={"center"}>
-          <Box cursor={"pointer"} onClick={() => navigate(appRoutes.HOME)}>
-            Logo
+          <Box
+            cursor={"pointer"}
+            onClick={() => navigate(appRoutes.HOME)}
+            h="full"
+            p="2"
+            bg={useColorModeValue("white", "gray.700")}
+            rounded="md"
+          >
+            <Image
+              src={logo}
+              alt="Logo"
+              height={"100%"}
+              w={["8", "10", "10"]}
+            />
           </Box>
           <HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
             {Links.map((link) => (
@@ -94,18 +117,20 @@ export default function HeaderNav() {
               cursor={"pointer"}
               minW={0}
             >
-              <Avatar
-                size={"sm"}
-                src={
-                  "https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
-                }
-              />
+              <Avatar size={"sm"} src={""} />
             </MenuButton>
             <MenuList>
-              <MenuItem color={"red.500"} onClick={logoutHandler}>
-                <Text pr={"2"}>Logout</Text>
-                <Icon as={Logout} boxSize="5" />
-              </MenuItem>
+              {isLoggedIn ? (
+                <MenuItem color={"red.500"} onClick={logoutHandler}>
+                  <Text pr={"2"}>Logout</Text>
+                  <Icon as={Logout} boxSize="5" />
+                </MenuItem>
+              ) : (
+                <MenuItem onClick={() => navigate(appRoutes.SIGN_IN)}>
+                  <Text pr={"2"}>Sign In</Text>
+                  <Icon as={LoginCurve} boxSize="5" />
+                </MenuItem>
+              )}
             </MenuList>
           </Menu>
         </Flex>
