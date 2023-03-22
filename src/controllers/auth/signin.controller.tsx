@@ -10,7 +10,7 @@ import {
   Heading,
   Text,
   useColorModeValue,
-  Link as ChakraLink,
+  Link as ChakraLink
 } from "@chakra-ui/react";
 import { useAppDispatch, useAppSelector } from "core/hooks/use-redux";
 import { AuthLocationState } from "models/auth";
@@ -24,7 +24,9 @@ import { appRoutes } from "core/routes/routes";
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const from = (location.state as AuthLocationState)?.from?.pathname || "/";
+  const from =
+    (location.state as AuthLocationState)?.from?.pathname ||
+    appRoutes.DASHBOARD;
   const dispatch = useAppDispatch();
   const { loading, error } = useAppSelector((state) => state.auth);
   const [state, setState] = useState({ email: "", password: "" });
@@ -102,7 +104,7 @@ export default function LoginPage() {
                   bg={"blue.400"}
                   color={"white"}
                   _hover={{
-                    bg: "blue.500",
+                    bg: "blue.500"
                   }}
                   onClick={onLogin}
                   isLoading={loading}

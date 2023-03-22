@@ -3,27 +3,48 @@ import AuthGuard from "core/guards/auth.guard";
 import { lazy } from "react";
 import { appRoutes } from "./routes";
 
-const Home = lazy(() => import("controllers/home/home.page"));
-const SignInPage = lazy(() => import("controllers/auth/signin.page"));
-const SignUpPage = lazy(() => import("controllers/auth/signup.page"));
+import DashboardLayout from "core/components/layout/dashboard-layout";
+import HomeLayout from "core/components/layout/home-layout";
+
+const Home = lazy(() => import("controllers/home/home.controller"));
+const Dashboard = lazy(
+  () => import("controllers/dashboard/dashboard.controller")
+);
+const SignInPage = lazy(() => import("controllers/auth/signin.controller"));
+const SignUpPage = lazy(() => import("controllers/auth/signup.controller"));
 
 const routes: RouteObject[] = [
   {
     element: (
       <AuthGuard>
-        <Home />
+        <DashboardLayout />
       </AuthGuard>
     ),
+    children: [
+      {
+        element: <Dashboard />,
+        path: appRoutes.DASHBOARD
+      }
+    ]
+  },
+  {
+    element: <HomeLayout />,
     path: appRoutes.HOME,
+    children: [
+      {
+        element: <Home />,
+        index: true
+      }
+    ]
   },
   {
     element: <SignInPage />,
-    path: appRoutes.SIGN_IN,
+    path: appRoutes.SIGN_IN
   },
   {
     element: <SignUpPage />,
-    path: appRoutes.SIGN_UP,
-  },
+    path: appRoutes.SIGN_UP
+  }
 ];
 
 export default routes;

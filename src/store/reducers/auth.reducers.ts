@@ -5,7 +5,7 @@ import { tokenKey, ExpirySession } from "lib/utils";
 const initialState: AuthState = {
   isLoggedIn: !!ExpirySession.get(tokenKey),
   loading: false,
-  error: "",
+  error: ""
 };
 
 export const AuthSlice = createSlice({
@@ -25,7 +25,10 @@ export const AuthSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-  },
+    logOut: (state: AuthState) => {
+      state.isLoggedIn = false;
+    }
+  }
 });
 
 export const actions = AuthSlice.actions;

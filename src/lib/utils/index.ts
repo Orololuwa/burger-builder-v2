@@ -48,7 +48,7 @@ export class ExpirySession {
     ); // create new expiring date.
     let newValue = {
       value,
-      expirationDate: expirationDate.toISOString(),
+      expirationDate: expirationDate.toISOString()
     };
     LocalStorage.set(key, JSON.stringify(newValue)); // add token to local storage.
   };
