@@ -7,10 +7,11 @@ class AuthService {
   async login(body: {
     email: string;
     password: string;
-  }): Promise<AxiosResponse<ILogin>> {
+  }): Promise<AxiosResponse<{ data: ILogin }>> {
     return new Promise(async (resolve, reject) => {
       try {
         const res = await publicInstance.post(apiRoutes.SIGN_IN, body);
+        console.log(res as AxiosResponse<ILogin>);
         resolve(res);
       } catch (err) {
         reject(err);
@@ -23,7 +24,7 @@ class AuthService {
     password: string;
     name: string;
     address: string;
-  }): Promise<AxiosResponse<ILogin>> {
+  }): Promise<AxiosResponse<{ data: ILogin }>> {
     return new Promise(async (resolve, reject) => {
       try {
         const res = await publicInstance.post(apiRoutes.SIGN_UP, body);
