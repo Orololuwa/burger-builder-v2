@@ -8,6 +8,7 @@ const Content = (): JSX.Element => {
       overflowX="auto"
       scrollBehavior={"smooth"}
       h={"calc(100vh - 4rem)"}
+      mt="16"
     >
       <Outlet />
     </Box>
