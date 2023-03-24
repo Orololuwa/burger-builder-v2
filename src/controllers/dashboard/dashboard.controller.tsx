@@ -3,21 +3,39 @@ import Burger from "core/components/burger/burger";
 import BuildControls from "core/components/burger/controls/build-controls";
 import { IngredientType } from "lib/helpers/ingredients";
 import { IObject } from "models/base";
+import { useState } from "react";
 
-const ingredients = {
-  [IngredientType.BACON]: 2,
-  [IngredientType.CHEESE]: 2,
-  [IngredientType.SALAD]: 2,
-  [IngredientType.MEAT]: 2
+const initialIngredientsState = {
+  [IngredientType.BACON]: 0,
+  [IngredientType.CHEESE]: 0,
+  [IngredientType.SALAD]: 0,
+  [IngredientType.MEAT]: 0
 };
 
 const Dashboard = () => {
+  const [ingredients, setIngredients] = useState(initialIngredientsState);
+
   const disabledInfo: IObject = {
     ...ingredients
   };
   for (let key in disabledInfo) {
     disabledInfo[key] = disabledInfo[key] <= 0;
   }
+
+  const ingredientAdded = (type: IngredientType) => {
+    setIngredients((prevState) => {
+      const updatedCount: number = (prevState as IObject)[type] + 1;
+      return { ...prevState, [type]: updatedCount };
+    });
+  };
+
+  const ingredientRemoved = (type: IngredientType) => {
+    setIngredients((prevState) => {
+      const updatedCount: number = (prevState as IObject)[type] - 1;
+
+      return { ...prevState, [type]: updatedCount < 0 ? 0 : updatedCount };
+    });
+  };
 
   return (
     <Box textAlign="center" fontSize="xl">
@@ -35,8 +53,8 @@ const Dashboard = () => {
       >
         <Burger ingredients={ingredients} />
         <BuildControls
-          ingredientAdded={() => {}}
-          ingredientRemoved={() => {}}
+          ingredientAdded={ingredientAdded}
+          ingredientRemoved={ingredientRemoved}
           disabled={disabledInfo}
           purchasable={true}
           ordered={() => {}}

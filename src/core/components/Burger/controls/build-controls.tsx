@@ -1,18 +1,19 @@
 import classes from "./build-controls.module.css";
 import BuildControl from "./build-control/build-control";
 import { IObject } from "models/base";
+import { IngredientType } from "lib/helpers/ingredients";
 
 const controls = [
-  { label: "Salad", type: "salad" },
-  { label: "Bacon", type: "bacon" },
-  { label: "Cheese", type: "cheese" },
-  { label: "Meat", type: "meat" }
+  { label: "Salad", type: IngredientType.SALAD },
+  { label: "Bacon", type: IngredientType.BACON },
+  { label: "Cheese", type: IngredientType.CHEESE },
+  { label: "Meat", type: IngredientType.MEAT }
 ];
 
 interface Props {
   price: number;
-  ingredientAdded: (type: string) => void;
-  ingredientRemoved: (type: string) => void;
+  ingredientAdded: (type: IngredientType) => void;
+  ingredientRemoved: (type: IngredientType) => void;
   disabled: IObject;
   purchasable: boolean;
   ordered: () => void;
