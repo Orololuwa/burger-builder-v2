@@ -35,7 +35,7 @@ import { useAppSelector } from "core/hooks/use-redux";
 
 const Links = [
   {
-    name: "Dashboard",
+    name: "Burger Builder",
     to: appRoutes.DASHBOARD
   },
   {
