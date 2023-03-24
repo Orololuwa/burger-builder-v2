@@ -1,16 +1,17 @@
 import { IngredientType } from "lib/helpers/ingredient";
-import { IObject } from "models/base";
+import { IObjectGeneric } from "models/base";
 import BurgerIngredient from "./ingredient/burger-ingredient";
 import classes from "./burger.module.css";
+import { IIngredientObject } from "models/ingredient";
 
 interface Props {
-  ingredients: IObject;
+  ingredients: IObjectGeneric<IIngredientObject>;
 }
 
 const Burger = (props: Props) => {
   let transformedIngredients: any = Object.keys(props.ingredients)
     .map((ingredient: string) => {
-      return [...Array(props.ingredients[ingredient])].map((_, i) => {
+      return [...Array(props.ingredients[ingredient].count)].map((_, i) => {
         return (
           <BurgerIngredient
             key={ingredient + i}

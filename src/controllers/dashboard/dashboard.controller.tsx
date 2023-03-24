@@ -1,51 +1,74 @@
 import { Box, Grid } from "@chakra-ui/react";
 import Burger from "core/components/burger/burger";
 import BuildControls from "core/components/burger/controls/build-controls";
-import { useAppDispatch, useAppSelector } from "core/hooks/use-redux";
+import { useIngredients } from "core/hooks/use-ingredients";
 import { IngredientType } from "lib/helpers/ingredient";
-import { IObject } from "models/base";
+import { IObject, IObjectGeneric } from "models/base";
+import { IIngredientObject } from "models/ingredient";
 import { useEffect, useState } from "react";
-import { getAllIngredients } from "store/action-creators/ingredient.action";
-
-const initialIngredientsState = {
-  [IngredientType.BACON]: 0,
-  [IngredientType.CHEESE]: 0,
-  [IngredientType.SALAD]: 0,
-  [IngredientType.MEAT]: 0
-};
 
 const Dashboard = () => {
-  const data = useAppSelector((state) => state.ingredient.allIngredients);
-  const dispatch = useAppDispatch();
+  const { dispatchAllIngredients, ingredients: data } = useIngredients();
   useEffect(() => {
-    dispatch(getAllIngredients());
+    dispatchAllIngredients();
   }, []);
 
-  console.log(data);
+  const initialIngredientsState = data.reduce((accumulator: any, curr) => {
+    if (
+      !(
+        curr.name === IngredientType.BREAD_TOP ||
+        curr.name === IngredientType.BREAD_BOTTOM
+      )
+    ) {
+      accumulator[curr.name] = {
+        count: 0,
+        price: curr.price,
+        visible:
+          curr.name === IngredientType.BREAD_TOP ||
+          curr.name === IngredientType.BREAD_BOTTOM
+      };
+    }
 
-  const [ingredients, setIngredients] = useState(initialIngredientsState);
+    return accumulator;
+  }, {});
+
+  const [ingredients, setIngredients] = useState<
+    IObjectGeneric<IIngredientObject>
+  >(initialIngredientsState);
 
   const disabledInfo: IObject = {
     ...ingredients
   };
   for (let key in disabledInfo) {
-    disabledInfo[key] = disabledInfo[key] <= 0;
+    disabledInfo[key] = disabledInfo[key].count <= 0;
   }
 
   const ingredientAdded = (type: IngredientType) => {
     setIngredients((prevState) => {
-      const updatedCount: number = (prevState as IObject)[type] + 1;
-      return { ...prevState, [type]: updatedCount };
+      const currValue = prevState[type];
+      return {
+        ...prevState,
+        [type]: { ...currValue, count: currValue.count + 1 }
+      };
     });
   };
 
   const ingredientRemoved = (type: IngredientType) => {
     setIngredients((prevState) => {
-      const updatedCount: number = (prevState as IObject)[type] - 1;
-
-      return { ...prevState, [type]: updatedCount < 0 ? 0 : updatedCount };
+      const currValue = prevState[type];
+      return {
+        ...prevState,
+        [type]: {
+          ...currValue,
+          count: currValue.count < 0 ? 0 : currValue.count - 1
+        }
+      };
     });
   };
+
+  useEffect(() => {
+    setIngredients(initialIngredientsState);
+  }, [data.length]);
 
   return (
     <Box textAlign="center" fontSize="xl">

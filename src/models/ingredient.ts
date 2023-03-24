@@ -9,3 +9,9 @@ export interface IIngredient {
 export interface IIngredientState {
   allIngredients: IBaseStoreState<IIngredient[]>;
 }
+
+export interface IIngredientObject {
+  count: number;
+  price: number;
+  visible: boolean;
+}

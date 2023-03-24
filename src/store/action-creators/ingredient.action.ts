@@ -1,5 +1,6 @@
 import { Dispatch } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
+import { errorDispatchHandler } from "lib/utils";
 import ingredientService from "services/ingredient.service";
 import { ingredientActions } from "store/reducers/ingredient.reducers";
 
@@ -14,11 +15,12 @@ export const getAllIngredients = () => {
     } catch (err: any) {
       const axiosError = err as AxiosError<{ message: string | string[] }>;
       const msg = axiosError.response?.data?.message;
-      typeof msg === "string"
-        ? dispatch(ingredientActions.getAllIngredientsError(msg || "Error"))
-        : ingredientActions.getAllIngredientsError(
-            msg?.length ? msg[0] : "Error"
-          );
+
+      errorDispatchHandler(
+        msg,
+        ingredientActions.getAllIngredientsError,
+        dispatch
+      );
     }
   };
 };
