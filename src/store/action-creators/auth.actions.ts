@@ -20,7 +20,7 @@ export const loginJWT = (
 
       const res = await authService.login(data);
 
-      ExpirySession.set(tokenKey, res.data.access_token);
+      ExpirySession.set(tokenKey, res.data.data.access_token);
 
       dispatch(actions.loginSuccess(true));
       navigate(from, { replace: true });
@@ -48,7 +48,7 @@ export const signUpJWT = (
 
       const res = await authService.signUp(data);
 
-      ExpirySession.set(tokenKey, res.data.access_token);
+      ExpirySession.set(tokenKey, res.data.data.access_token);
 
       dispatch(actions.loginSuccess(true));
       navigate(from, { replace: true });
