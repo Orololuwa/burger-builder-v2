@@ -1,4 +1,4 @@
-import { IngredientType } from "lib/helpers/ingredients";
+import { IngredientType } from "lib/helpers/ingredient";
 import classes from "./ingredient.module.css";
 
 interface Props {

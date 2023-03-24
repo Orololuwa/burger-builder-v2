@@ -1,4 +1,4 @@
-import { IngredientType } from "lib/helpers/ingredients";
+import { IngredientType } from "lib/helpers/ingredient";
 import { IObject } from "models/base";
 import BurgerIngredient from "./ingredient/burger-ingredient";
 import classes from "./burger.module.css";

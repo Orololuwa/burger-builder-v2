@@ -1,9 +1,11 @@
 import { Box, Grid } from "@chakra-ui/react";
 import Burger from "core/components/burger/burger";
 import BuildControls from "core/components/burger/controls/build-controls";
-import { IngredientType } from "lib/helpers/ingredients";
+import { useAppDispatch, useAppSelector } from "core/hooks/use-redux";
+import { IngredientType } from "lib/helpers/ingredient";
 import { IObject } from "models/base";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getAllIngredients } from "store/action-creators/ingredient.action";
 
 const initialIngredientsState = {
   [IngredientType.BACON]: 0,
@@ -13,6 +15,14 @@ const initialIngredientsState = {
 };
 
 const Dashboard = () => {
+  const data = useAppSelector((state) => state.ingredient.allIngredients);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(getAllIngredients());
+  }, []);
+
+  console.log(data);
+
   const [ingredients, setIngredients] = useState(initialIngredientsState);
 
   const disabledInfo: IObject = {

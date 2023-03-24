@@ -1,7 +1,7 @@
 import classes from "./build-controls.module.css";
 import BuildControl from "./build-control/build-control";
 import { IObject } from "models/base";
-import { IngredientType } from "lib/helpers/ingredients";
+import { IngredientType } from "lib/helpers/ingredient";
 
 const controls = [
   { label: "Salad", type: IngredientType.SALAD },
