@@ -20,7 +20,13 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import { ColorModeSwitcher } from "core/components/color-mode-switcher";
-import { Link, useMatch, useNavigate, useResolvedPath } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useMatch,
+  useNavigate,
+  useResolvedPath
+} from "react-router-dom";
 import { appRoutes } from "core/routes/routes";
 import { LoginCurve, Logout } from "iconsax-react";
 import { useLogout } from "core/hooks/use-logout";
@@ -29,7 +35,7 @@ import { useAppSelector } from "core/hooks/use-redux";
 
 const Links = [
   {
-    name: "Dashboard",
+    name: "Burger Builder",
     to: appRoutes.DASHBOARD
   },
   {
@@ -73,8 +79,17 @@ export default function HeaderNav() {
 
   const { logoutHandler } = useLogout();
 
+  const location = useLocation();
+
   return (
-    <Box bg={useColorModeValue("orange.200", "orange.900")} px={4}>
+    <Box
+      bg={useColorModeValue("orange.200", "orange.900")}
+      px={4}
+      position={location.pathname === "/" ? "unset" : "fixed"}
+      top="0"
+      left="0"
+      width="full"
+    >
       <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
         <IconButton
           size={"md"}

@@ -9,5 +9,6 @@ export const appRoutes = {
 
 export const apiRoutes = {
   SIGN_IN: "/auth/signin",
-  SIGN_UP: "/auth/signup"
+  SIGN_UP: "/auth/signup",
+  INGREDIENTS: "/ingredients"
 };

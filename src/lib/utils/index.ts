@@ -1,3 +1,5 @@
+import { AnyAction, Dispatch } from "@reduxjs/toolkit";
+
 export class LocalStorage {
   static get = (key: string) => {
     if (typeof window === "undefined") return;
@@ -91,4 +93,16 @@ export const isFieldsInvalid = (obj: object) => {
   });
 
   return returnValue;
+};
+
+export const errorDispatchHandler = (
+  msg: string | string[] | undefined,
+  actionCallback: (msg: string) => AnyAction,
+  dispatch: Dispatch
+) => {
+  typeof msg === "string"
+    ? dispatch(actionCallback(msg))
+    : typeof msg === "object"
+    ? dispatch(actionCallback(msg[0]))
+    : dispatch(actionCallback("error"));
 };
