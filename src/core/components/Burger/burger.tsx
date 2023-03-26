@@ -10,6 +10,12 @@ interface Props {
 
 const Burger = (props: Props) => {
   let transformedIngredients: any = Object.keys(props.ingredients)
+    .filter((ingredient: string) => {
+      return (
+        ingredient !== IngredientType.BREAD_TOP &&
+        ingredient !== IngredientType.BREAD_BOTTOM
+      );
+    })
     .map((ingredient: string) => {
       return [...Array(props.ingredients[ingredient].count)].map((_, i) => {
         return (

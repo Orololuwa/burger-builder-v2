@@ -14,20 +14,18 @@ const Dashboard = () => {
   }, []);
 
   const initialIngredientsState = data.reduce((accumulator: any, curr) => {
-    if (
-      !(
+    accumulator[curr.name] = {
+      count:
+        curr.name === IngredientType.BREAD_TOP ||
+        curr.name === IngredientType.BREAD_BOTTOM
+          ? 1
+          : 0,
+      price: curr.price,
+      visible: !(
         curr.name === IngredientType.BREAD_TOP ||
         curr.name === IngredientType.BREAD_BOTTOM
       )
-    ) {
-      accumulator[curr.name] = {
-        count: 0,
-        price: curr.price,
-        visible:
-          curr.name === IngredientType.BREAD_TOP ||
-          curr.name === IngredientType.BREAD_BOTTOM
-      };
-    }
+    };
 
     return accumulator;
   }, {});
@@ -42,6 +40,8 @@ const Dashboard = () => {
   for (let key in disabledInfo) {
     disabledInfo[key] = disabledInfo[key].count <= 0;
   }
+
+  // console.log(ingredients);
 
   const ingredientAdded = (type: IngredientType) => {
     setIngredients((prevState) => {
@@ -64,6 +64,13 @@ const Dashboard = () => {
         }
       };
     });
+  };
+
+  const getPrice = () => {
+    return Object.values(ingredients).reduce(
+      (acc: number, curr) => acc + curr.count * curr.price,
+      0
+    );
   };
 
   useEffect(() => {
@@ -91,7 +98,7 @@ const Dashboard = () => {
           disabled={disabledInfo}
           purchasable={true}
           ordered={() => {}}
-          price={500}
+          price={getPrice()}
         />
       </Grid>
     </Box>

@@ -2,6 +2,7 @@ import classes from "./build-controls.module.css";
 import BuildControl from "./build-control/build-control";
 import { IObject } from "models/base";
 import { IngredientType } from "lib/helpers/ingredient";
+import { formatter } from "lib/utils";
 
 const controls = [
   { label: "Salad", type: IngredientType.SALAD },
@@ -22,7 +23,11 @@ interface Props {
 const BuildControls = (props: Props) => (
   <div className={classes.BuildControls}>
     <p>
-      Current Price: <strong>{props.price.toFixed(2)}</strong>
+      Current Price:{" "}
+      <strong>
+        &#x20A6;
+        {formatter.format(parseFloat(props.price.toFixed(2)))}
+      </strong>
     </p>
     {controls.map((ctrl) => (
       <BuildControl

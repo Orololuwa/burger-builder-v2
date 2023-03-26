@@ -106,3 +106,14 @@ export const errorDispatchHandler = (
     ? dispatch(actionCallback(msg[0]))
     : dispatch(actionCallback("error"));
 };
+
+export const formatter = new Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+
+export const formatterII = new Intl.NumberFormat("en-US", {
+  notation: "compact",
+  compactDisplay: "short",
+  maximumFractionDigits: 2
+});
