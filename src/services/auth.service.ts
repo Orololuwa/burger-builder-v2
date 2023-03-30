@@ -22,7 +22,7 @@ class AuthService {
     email: string;
     password: string;
     name: string;
-    address: string;
+    phone: string;
   }): Promise<AxiosResponse<{ data: ILogin }>> {
     return new Promise(async (resolve, reject) => {
       try {

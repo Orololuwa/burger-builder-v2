@@ -38,7 +38,7 @@ export default function SignupCard() {
   const [state, setState] = useState({
     email: "",
     password: "",
-    address: "",
+    phone: "",
     name: "",
     role: "user"
   });
@@ -105,16 +105,16 @@ export default function SignupCard() {
                 </FormControl>
               </Box>
             </HStack>
-            <FormControl id="addreess" isRequired>
-              <FormLabel>Address</FormLabel>
+            <FormControl id="tel" isRequired>
+              <FormLabel>Phone Number</FormLabel>
               <Input
-                type="text"
-                name="address"
-                value={state.address}
+                type="tel"
+                name="phone"
+                value={state.phone}
                 onChange={onChange}
               />
             </FormControl>
-            <FormControl id="addreess">
+            <FormControl id="role">
               <FormLabel>Role</FormLabel>
               <Select name="role" value={state.role} onChange={onChange}>
                 <option value={"user"}>User</option>
