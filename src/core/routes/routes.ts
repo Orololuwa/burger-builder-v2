@@ -10,5 +10,6 @@ export const appRoutes = {
 export const apiRoutes = {
   SIGN_IN: "/auth/signin",
   SIGN_UP: "/auth/signup",
+  PROFILE: "/auth/profile",
   INGREDIENTS: "/ingredients"
 };

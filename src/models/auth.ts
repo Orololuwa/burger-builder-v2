@@ -1,19 +1,23 @@
+import { IBaseStoreState } from "./base";
+
 export interface AuthState {
   isLoggedIn: boolean;
   loading: boolean;
   error: string;
+  profile: IBaseStoreState<IUser | null>;
 }
 
 export interface ILogin {
-  user: User;
+  user: IUser;
   access_token: string;
 }
 
-interface User {
+export interface IUser {
   id: number;
   name: string;
   email: string;
   phone: string;
+  role: string;
 }
 
 export interface AuthLocationState {

@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { apiRoutes } from "core/routes/routes";
-import { publicInstance } from "lib/config/axios.config";
-import { ILogin } from "models/auth";
+import { authInstance, publicInstance } from "lib/config/axios.config";
+import { ILogin, IUser } from "models/auth";
 
 class AuthService {
   async login(body: {
@@ -18,15 +18,23 @@ class AuthService {
     });
   }
 
-  async signUp(body: {
-    email: string;
-    password: string;
-    name: string;
-    phone: string;
-  }): Promise<AxiosResponse<{ data: ILogin }>> {
+  async signUp(
+    body: Omit<IUser, "id">
+  ): Promise<AxiosResponse<{ data: ILogin }>> {
     return new Promise(async (resolve, reject) => {
       try {
         const res = await publicInstance.post(apiRoutes.SIGN_UP, body);
+        resolve(res);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  async getProfile(): Promise<AxiosResponse<{ data: IUser }>> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const res = await authInstance.get(apiRoutes.PROFILE);
         resolve(res);
       } catch (err) {
         reject(err);
