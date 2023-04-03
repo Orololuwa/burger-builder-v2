@@ -12,6 +12,6 @@ export interface IIngredientState {
 
 export interface IIngredientObject {
   count: number;
-  price: number;
+  price: string;
   visible: boolean;
 }

@@ -1,6 +1,7 @@
-import { Box, Grid } from "@chakra-ui/react";
+import { Box, Grid, useDisclosure } from "@chakra-ui/react";
 import Burger from "core/components/burger/burger";
 import BuildControls from "core/components/burger/controls/build-controls";
+import OrderSummary from "core/components/orders/order-summary";
 import { useIngredients } from "core/hooks/use-ingredients";
 import { IngredientType } from "lib/helpers/ingredient";
 import { IObject, IObjectGeneric } from "models/base";
@@ -41,8 +42,6 @@ const Dashboard = () => {
     disabledInfo[key] = disabledInfo[key].count <= 0;
   }
 
-  // console.log(ingredients);
-
   const ingredientAdded = (type: IngredientType) => {
     setIngredients((prevState) => {
       const currValue = prevState[type];
@@ -68,14 +67,24 @@ const Dashboard = () => {
 
   const getPrice = () => {
     return Object.values(ingredients).reduce(
-      (acc: number, curr) => acc + curr.count * curr.price,
+      (acc: number, curr) => acc + curr.count * parseFloat(curr.price),
       0
+    );
+  };
+
+  const purchasable = () => {
+    return (
+      getPrice() >
+      parseFloat(ingredients[IngredientType.BREAD_TOP]?.price) +
+        parseFloat(ingredients[IngredientType.BREAD_BOTTOM]?.price)
     );
   };
 
   useEffect(() => {
     setIngredients(initialIngredientsState);
   }, [data.length]);
+
+  const { isOpen, onClose, onOpen } = useDisclosure();
 
   return (
     <Box textAlign="center" fontSize="xl">
@@ -96,11 +105,16 @@ const Dashboard = () => {
           ingredientAdded={ingredientAdded}
           ingredientRemoved={ingredientRemoved}
           disabled={disabledInfo}
-          purchasable={true}
-          ordered={() => {}}
+          purchasable={purchasable()}
+          ordered={onOpen}
           price={getPrice()}
         />
       </Grid>
+      <OrderSummary
+        isOpen={isOpen}
+        onClose={onClose}
+        ingredients={ingredients}
+      />
     </Box>
   );
 };

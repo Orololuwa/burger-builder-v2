@@ -7,6 +7,7 @@ export interface IAddress {
   city: string;
   state: string;
   zipCode: number;
+  country: string;
   primaryAddress: boolean;
   createdAt: string;
   updatedAt: string;
@@ -14,7 +15,7 @@ export interface IAddress {
 
 export type ICreateAddres = Pick<
   IAddress,
-  "houseNumber" | "city" | "street" | "state" | "zipCode"
+  "houseNumber" | "city" | "street" | "state" | "zipCode" | "country"
 >;
 
 export interface IAddressState {

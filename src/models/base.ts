@@ -11,3 +11,8 @@ export interface IBaseStoreState<T> {
   loading: boolean;
   error: string;
 }
+
+export interface BaseModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}

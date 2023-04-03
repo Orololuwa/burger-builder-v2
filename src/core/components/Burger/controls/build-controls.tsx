@@ -5,10 +5,10 @@ import { IngredientType } from "lib/helpers/ingredient";
 import { formatter } from "lib/utils";
 
 const controls = [
-  { label: "Salad", type: IngredientType.SALAD },
+  { label: "Meat", type: IngredientType.MEAT },
   { label: "Bacon", type: IngredientType.BACON },
   { label: "Cheese", type: IngredientType.CHEESE },
-  { label: "Meat", type: IngredientType.MEAT }
+  { label: "Salad", type: IngredientType.SALAD }
 ];
 
 interface Props {
