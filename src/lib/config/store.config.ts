@@ -10,12 +10,14 @@ import {
   REGISTER
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import addressReducers from "store/reducers/address.reducers";
 import authReducers from "store/reducers/auth.reducers";
 import ingredientReducers from "store/reducers/ingredient.reducers";
 
 const rootReducer = combineReducers({
   auth: authReducers,
-  ingredient: ingredientReducers
+  ingredient: ingredientReducers,
+  address: addressReducers
 });
 
 const persistConfig = {
