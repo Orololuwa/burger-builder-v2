@@ -78,6 +78,15 @@ export const IngredientSlice = createSlice({
       const duplicateFrom = { ...duplicatedState[index] };
       duplicatedState.push(duplicateFrom);
       state.formattedIngredients = duplicatedState;
+    },
+    deletePack: (state, action: PayloadAction<number>) => {
+      const index = action.payload;
+      const duplicatedState = [...state.formattedIngredients];
+      if (index > -1) duplicatedState.splice(index, 1);
+      state.activePack = 0;
+      if (state.formattedIngredients.length > 1) {
+        state.formattedIngredients = duplicatedState;
+      }
     }
   }
 });

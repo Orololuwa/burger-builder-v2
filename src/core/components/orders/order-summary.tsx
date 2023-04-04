@@ -19,11 +19,13 @@ import {
   RadioGroup,
   Radio,
   Box,
-  useToast
+  useToast,
+  useColorModeValue,
+  Center
 } from "@chakra-ui/react";
 import { useIngredients } from "core/hooks/use-ingredients";
 import { useAppDispatch, useAppSelector } from "core/hooks/use-redux";
-import { Add, ArrowLeft, Minus } from "iconsax-react";
+import { Add, ArrowLeft, Minus, Trash } from "iconsax-react";
 import { IngredientType } from "lib/helpers/ingredient";
 import { formatter } from "lib/utils";
 import { BaseModalProps } from "models/base";
@@ -58,7 +60,9 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
     ingredientAdded,
     ingredientRemoved,
     setActivePack,
-    duplicatePack
+    duplicatePack,
+    deletePack,
+    IsDeletable
   } = useIngredients();
 
   const getTotalPrice = () => {
@@ -136,6 +140,10 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
     onCloseState();
   };
 
+  const deletePackHandler = (packNumber: number) => {
+    deletePack(packNumber);
+  };
+
   // Drawer Component State
   const [drawerState, setDrawerState] = useState<IDrawerState>(
     IDrawerState.CHECKOUT
@@ -158,7 +166,18 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
           <Stack bg="primary.500" rounded="lg" spacing={"4"}>
             {formattedIngredients.map((ingredients, index) => (
               <Stack key={index} spacing="3">
-                <Heading fontSize={"md"}>Pack {index + 1}</Heading>
+                <Flex justifyContent={"space-between"}>
+                  <Heading fontSize={"md"}>Pack {index + 1}</Heading>
+                  <Center
+                    bg="#E53E3E12"
+                    boxSize={"8"}
+                    rounded="full"
+                    cursor={IsDeletable ? "pointer" : "not-allowed"}
+                    onClick={() => deletePackHandler(index)}
+                  >
+                    <Icon as={Trash} boxSize="5" color={"red.500"} />
+                  </Center>
+                </Flex>
                 {Object.keys(ingredients)
                   .filter(
                     (ingredient) =>
@@ -187,7 +206,7 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
                       <Flex
                         alignItems="center"
                         gap="2"
-                        background={"gray.400"}
+                        background={useColorModeValue("gray.200", "gray.600")}
                         px="2"
                         py="1"
                         rounded={"2xl"}

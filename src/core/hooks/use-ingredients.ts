@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from "core/hooks/use-redux";
 import { IngredientType } from "lib/helpers/ingredient";
+import { useMemo } from "react";
 import { getAllIngredients } from "store/action-creators/ingredient.action";
 import { ingredientActions } from "store/reducers/ingredient.reducers";
 
@@ -33,6 +34,14 @@ export const useIngredients = () => {
     dispatch(ingredientActions.duplicatePack(packNumber));
   };
 
+  const deletePack = (packNumber: number) => {
+    dispatch(ingredientActions.deletePack(packNumber));
+  };
+
+  const IsDeletable = useMemo(() => {
+    return formattedIngredients.length > 1;
+  }, [formattedIngredients.length]);
+
   return {
     dispatchAllIngredients,
     ingredients: ingredients.data,
@@ -41,6 +50,8 @@ export const useIngredients = () => {
     formattedIngredients,
     activePack,
     setActivePack,
-    duplicatePack
+    duplicatePack,
+    deletePack,
+    IsDeletable
   };
 };
