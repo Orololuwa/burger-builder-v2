@@ -21,18 +21,17 @@ import {
   Box,
   useToast
 } from "@chakra-ui/react";
+import { useIngredients } from "core/hooks/use-ingredients";
 import { useAppDispatch, useAppSelector } from "core/hooks/use-redux";
-import { ArrowLeft } from "iconsax-react";
+import { Add, ArrowLeft, Minus } from "iconsax-react";
+import { IngredientType } from "lib/helpers/ingredient";
 import { formatter } from "lib/utils";
-import { BaseModalProps, IObjectGeneric } from "models/base";
-import { IIngredientObject } from "models/ingredient";
+import { BaseModalProps } from "models/base";
 import { useEffect, useState } from "react";
 import addressService from "services/address.service";
 import { getAllAddress } from "store/action-creators/address.actions";
 
-interface Props extends BaseModalProps {
-  ingredients: IObjectGeneric<IIngredientObject>;
-}
+interface Props extends BaseModalProps {}
 
 enum IDrawerState {
   CHECKOUT = "checkout",
@@ -49,18 +48,27 @@ const initialAddressState = {
   zipCode: ""
 };
 
-const OrderSummary = ({ isOpen, onClose, ingredients }: Props) => {
+const OrderSummary = ({ isOpen, onClose }: Props) => {
   const dispatch = useAppDispatch();
   const toast = useToast();
   const profile = useAppSelector((state) => state.auth.profile);
   const addresses = useAppSelector((state) => state.address.allAddress);
+  const { formattedIngredients, ingredientAdded, ingredientRemoved } =
+    useIngredients();
 
   const getTotalPrice = () => {
-    return Object.values(ingredients).reduce(
-      (acc: number, curr) => acc + curr.count * parseFloat(curr.price),
+    return formattedIngredients.reduce(
+      (acc, ingredient) =>
+        acc +
+        Object.values(ingredient).reduce(
+          (acc: number, curr) => acc + curr.count * parseFloat(curr.price),
+          0
+        ),
       0
     );
   };
+
+  const ingredients = formattedIngredients[0];
 
   useEffect(() => {
     dispatch(getAllAddress());
@@ -140,7 +148,69 @@ const OrderSummary = ({ isOpen, onClose, ingredients }: Props) => {
           <Stack bg="primary.500" rounded="lg" spacing={"4"} py="4">
             <Heading textTransform={"capitalize"} py="2" fontSize={"lg"}>
               Summary
-            </Heading>
+            </Heading>{" "}
+            <Divider w="100%" mx="5%" />
+            {formattedIngredients.map((ingredients, index) => (
+              <Stack key={index} spacing="3">
+                <Heading fontSize={"md"}>Pack {index + 1}</Heading>
+                {Object.keys(ingredients)
+                  .filter(
+                    (ingredient) =>
+                      ingredients[ingredient].count > 0 &&
+                      ingredient !== IngredientType.BREAD_TOP &&
+                      ingredient !== IngredientType.BREAD_BOTTOM
+                  )
+                  .map((ingredient, idx) => (
+                    <Flex
+                      alignItems={"center"}
+                      justifyContent="space-between"
+                      key={idx}
+                    >
+                      <Stack spacing="1">
+                        <Text fontWeight={"medium"} textTransform="capitalize">
+                          {`${ingredient.replace("-", " ")}`}
+                        </Text>
+                        <Text fontSize="sm" fontWeight={"light"}>
+                          &#x20A6;
+                          {`${formatter.format(
+                            parseFloat(ingredients[ingredient].price) *
+                              ingredients[ingredient].count
+                          )}`}
+                        </Text>
+                      </Stack>
+                      <Flex
+                        alignItems="center"
+                        gap="2"
+                        background={"gray.400"}
+                        px="2"
+                        py="1"
+                        rounded={"2xl"}
+                      >
+                        <Icon
+                          as={Minus}
+                          boxSize="5"
+                          cursor="pointer"
+                          onClick={() =>
+                            ingredientRemoved(
+                              ingredient as IngredientType,
+                              index
+                            )
+                          }
+                        />
+                        <Box>{ingredients[ingredient].count}</Box>
+                        <Icon
+                          as={Add}
+                          boxSize="5"
+                          cursor="pointer"
+                          onClick={() =>
+                            ingredientAdded(ingredient as IngredientType, index)
+                          }
+                        />
+                      </Flex>
+                    </Flex>
+                  ))}
+              </Stack>
+            ))}
             <Divider w="100%" mx="5%" />
             {Object.keys(ingredients)
               .filter((ingredient) => ingredients[ingredient].count > 0)
@@ -164,9 +234,7 @@ const OrderSummary = ({ isOpen, onClose, ingredients }: Props) => {
                   </Heading>
                 </Flex>
               ))}
-
             <Divider w="100%" mx="5%" />
-
             <Flex alignItems={"center"} justifyContent="space-between" pb="4">
               <Text fontWeight={"medium"} textTransform="capitalize">
                 Total
@@ -397,7 +465,7 @@ const OrderSummary = ({ isOpen, onClose, ingredients }: Props) => {
   };
 
   return (
-    <Drawer isOpen={isOpen} onClose={onClose} size="md">
+    <Drawer isOpen={isOpen} onClose={onClose} size="md" trapFocus={false}>
       <DrawerOverlay />
       <DrawerContent>
         <DrawerHeader display={"inline-flex"} alignItems="center" gap={"4"}>

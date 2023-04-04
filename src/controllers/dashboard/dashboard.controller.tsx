@@ -4,36 +4,23 @@ import BuildControls from "core/components/burger/controls/build-controls";
 import OrderSummary from "core/components/orders/order-summary";
 import { useIngredients } from "core/hooks/use-ingredients";
 import { IngredientType } from "lib/helpers/ingredient";
-import { IObject, IObjectGeneric } from "models/base";
-import { IIngredientObject } from "models/ingredient";
-import { useEffect, useState } from "react";
+import { IObject } from "models/base";
+import { useEffect } from "react";
 
 const Dashboard = () => {
-  const { dispatchAllIngredients, ingredients: data } = useIngredients();
+  const {
+    currIngredientIndex,
+    dispatchAllIngredients,
+    formattedIngredients,
+    ingredientAdded,
+    ingredientRemoved
+  } = useIngredients();
+
   useEffect(() => {
     dispatchAllIngredients();
   }, []);
 
-  const initialIngredientsState = data.reduce((accumulator: any, curr) => {
-    accumulator[curr.name] = {
-      count:
-        curr.name === IngredientType.BREAD_TOP ||
-        curr.name === IngredientType.BREAD_BOTTOM
-          ? 1
-          : 0,
-      price: curr.price,
-      visible: !(
-        curr.name === IngredientType.BREAD_TOP ||
-        curr.name === IngredientType.BREAD_BOTTOM
-      )
-    };
-
-    return accumulator;
-  }, {});
-
-  const [ingredients, setIngredients] = useState<
-    IObjectGeneric<IIngredientObject>
-  >(initialIngredientsState);
+  const ingredients = formattedIngredients[currIngredientIndex];
 
   const disabledInfo: IObject = {
     ...ingredients
@@ -41,29 +28,6 @@ const Dashboard = () => {
   for (let key in disabledInfo) {
     disabledInfo[key] = disabledInfo[key].count <= 0;
   }
-
-  const ingredientAdded = (type: IngredientType) => {
-    setIngredients((prevState) => {
-      const currValue = prevState[type];
-      return {
-        ...prevState,
-        [type]: { ...currValue, count: currValue.count + 1 }
-      };
-    });
-  };
-
-  const ingredientRemoved = (type: IngredientType) => {
-    setIngredients((prevState) => {
-      const currValue = prevState[type];
-      return {
-        ...prevState,
-        [type]: {
-          ...currValue,
-          count: currValue.count < 0 ? 0 : currValue.count - 1
-        }
-      };
-    });
-  };
 
   const getPrice = () => {
     return Object.values(ingredients).reduce(
@@ -79,10 +43,6 @@ const Dashboard = () => {
         parseFloat(ingredients[IngredientType.BREAD_BOTTOM]?.price)
     );
   };
-
-  useEffect(() => {
-    setIngredients(initialIngredientsState);
-  }, [data.length]);
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -110,11 +70,7 @@ const Dashboard = () => {
           price={getPrice()}
         />
       </Grid>
-      <OrderSummary
-        isOpen={isOpen}
-        onClose={onClose}
-        ingredients={ingredients}
-      />
+      <OrderSummary isOpen={isOpen} onClose={onClose} />
     </Box>
   );
 };

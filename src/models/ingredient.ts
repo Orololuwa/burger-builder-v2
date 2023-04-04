@@ -1,4 +1,4 @@
-import { IBaseStoreState } from "./base";
+import { IBaseStoreState, IObjectGeneric } from "./base";
 
 export interface IIngredient {
   id: number;
@@ -8,6 +8,8 @@ export interface IIngredient {
 
 export interface IIngredientState {
   allIngredients: IBaseStoreState<IIngredient[]>;
+  formattedIngredients: IObjectGeneric<IIngredientObject>[];
+  currIngredientIndex: number;
 }
 
 export interface IIngredientObject {
