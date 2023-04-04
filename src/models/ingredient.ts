@@ -9,7 +9,7 @@ export interface IIngredient {
 export interface IIngredientState {
   allIngredients: IBaseStoreState<IIngredient[]>;
   formattedIngredients: IObjectGeneric<IIngredientObject>[];
-  currIngredientIndex: number;
+  activePack: number;
 }
 
 export interface IIngredientObject {

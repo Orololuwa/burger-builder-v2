@@ -9,7 +9,7 @@ import { useEffect } from "react";
 
 const Dashboard = () => {
   const {
-    currIngredientIndex,
+    activePack,
     dispatchAllIngredients,
     formattedIngredients,
     ingredientAdded,
@@ -20,7 +20,7 @@ const Dashboard = () => {
     dispatchAllIngredients();
   }, []);
 
-  const ingredients = formattedIngredients[currIngredientIndex];
+  const ingredients = formattedIngredients[activePack];
 
   const disabledInfo: IObject = {
     ...ingredients

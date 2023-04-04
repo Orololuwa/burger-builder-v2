@@ -22,7 +22,7 @@ interface Props {
 }
 
 const BuildControls = (props: Props) => {
-  const { currIngredientIndex } = useIngredients();
+  const { activePack } = useIngredients();
 
   return (
     <div className={classes.BuildControls}>
@@ -37,10 +37,8 @@ const BuildControls = (props: Props) => {
         <BuildControl
           key={ctrl.label}
           label={ctrl.label}
-          added={() => props.ingredientAdded(ctrl.type, currIngredientIndex)}
-          removed={() =>
-            props.ingredientRemoved(ctrl.type, currIngredientIndex)
-          }
+          added={() => props.ingredientAdded(ctrl.type, activePack)}
+          removed={() => props.ingredientRemoved(ctrl.type, activePack)}
           disabled={props.disabled[ctrl.type]}
         />
       ))}

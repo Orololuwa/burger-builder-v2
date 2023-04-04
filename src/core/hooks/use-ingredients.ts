@@ -7,9 +7,7 @@ export const useIngredients = () => {
   const ingredients = useAppSelector(
     (state) => state.ingredient.allIngredients
   );
-  const currIngredientIndex = useAppSelector(
-    (state) => state.ingredient.currIngredientIndex
-  );
+  const activePack = useAppSelector((state) => state.ingredient.activePack);
   const formattedIngredients = useAppSelector(
     (state) => state.ingredient.formattedIngredients
   );
@@ -27,12 +25,22 @@ export const useIngredients = () => {
     dispatch(ingredientActions.decreaseIngredientCount({ name, index }));
   };
 
+  const setActivePack = (packNumber: number) => {
+    dispatch(ingredientActions.setActivePack(packNumber));
+  };
+
+  const duplicatePack = (packNumber: number) => {
+    dispatch(ingredientActions.duplicatePack(packNumber));
+  };
+
   return {
     dispatchAllIngredients,
     ingredients: ingredients.data,
     ingredientAdded,
     ingredientRemoved,
     formattedIngredients,
-    currIngredientIndex
+    activePack,
+    setActivePack,
+    duplicatePack
   };
 };

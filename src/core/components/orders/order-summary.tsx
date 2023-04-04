@@ -53,8 +53,13 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
   const toast = useToast();
   const profile = useAppSelector((state) => state.auth.profile);
   const addresses = useAppSelector((state) => state.address.allAddress);
-  const { formattedIngredients, ingredientAdded, ingredientRemoved } =
-    useIngredients();
+  const {
+    formattedIngredients,
+    ingredientAdded,
+    ingredientRemoved,
+    setActivePack,
+    duplicatePack
+  } = useIngredients();
 
   const getTotalPrice = () => {
     return formattedIngredients.reduce(
@@ -125,6 +130,12 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
     }
   };
 
+  // Pack functions
+  const addToPack = (packNumber: number) => {
+    setActivePack(packNumber);
+    onCloseState();
+  };
+
   // Drawer Component State
   const [drawerState, setDrawerState] = useState<IDrawerState>(
     IDrawerState.CHECKOUT
@@ -134,7 +145,6 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
     [IDrawerState.CHECKOUT]: (
       <DrawerBody>
         <Grid
-          p={3}
           pb="16"
           gridTemplateColumns={[
             "repeat(1, 1fr)",
@@ -145,11 +155,7 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
           ]}
           gridGap={"5"}
         >
-          <Stack bg="primary.500" rounded="lg" spacing={"4"} py="4">
-            <Heading textTransform={"capitalize"} py="2" fontSize={"lg"}>
-              Summary
-            </Heading>{" "}
-            <Divider w="100%" mx="5%" />
+          <Stack bg="primary.500" rounded="lg" spacing={"4"}>
             {formattedIngredients.map((ingredients, index) => (
               <Stack key={index} spacing="3">
                 <Heading fontSize={"md"}>Pack {index + 1}</Heading>
@@ -167,10 +173,10 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
                       key={idx}
                     >
                       <Stack spacing="1">
-                        <Text fontWeight={"medium"} textTransform="capitalize">
+                        <Text fontWeight={"sm"} textTransform="capitalize">
                           {`${ingredient.replace("-", " ")}`}
                         </Text>
-                        <Text fontSize="sm" fontWeight={"light"}>
+                        <Text fontSize="xs" fontWeight={"light"}>
                           &#x20A6;
                           {`${formatter.format(
                             parseFloat(ingredients[ingredient].price) *
@@ -185,10 +191,11 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
                         px="2"
                         py="1"
                         rounded={"2xl"}
+                        fontSize="xs"
                       >
                         <Icon
                           as={Minus}
-                          boxSize="5"
+                          boxSize="4"
                           cursor="pointer"
                           onClick={() =>
                             ingredientRemoved(
@@ -200,7 +207,7 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
                         <Box>{ingredients[ingredient].count}</Box>
                         <Icon
                           as={Add}
-                          boxSize="5"
+                          boxSize="4"
                           cursor="pointer"
                           onClick={() =>
                             ingredientAdded(ingredient as IngredientType, index)
@@ -209,6 +216,40 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
                       </Flex>
                     </Flex>
                   ))}
+                <Flex
+                  alignItems={"center"}
+                  justifyContent="space-between"
+                  py="2"
+                >
+                  <Flex
+                    alignItems="center"
+                    gap="1"
+                    borderColor={"gray.400"}
+                    borderWidth="thin"
+                    px="3"
+                    py="1"
+                    rounded={"3xl"}
+                    cursor="pointer"
+                    onClick={() => addToPack(index)}
+                  >
+                    <Icon as={Add} boxSize="3" />
+                    <Text fontSize={"xs"}>Add to pack</Text>
+                  </Flex>
+                  <Flex
+                    alignItems="center"
+                    gap="2"
+                    borderColor={"gray.400"}
+                    borderWidth="thin"
+                    px="4"
+                    py="2"
+                    rounded={"xl"}
+                    borderStyle="dashed"
+                    cursor="pointer"
+                    onClick={() => duplicatePack(index)}
+                  >
+                    <Text fontSize={"xs"}>Duplicate pack</Text>
+                  </Flex>
+                </Flex>
               </Stack>
             ))}
             <Divider w="100%" mx="5%" />

@@ -9,7 +9,7 @@ const initialState: IIngredientState = {
     error: ""
   },
   formattedIngredients: [{}],
-  currIngredientIndex: 0
+  activePack: 0
 };
 
 export const IngredientSlice = createSlice({
@@ -68,6 +68,16 @@ export const IngredientSlice = createSlice({
         ...currValue,
         count: currValue.count < 0 ? 0 : currValue.count - 1
       };
+    },
+    setActivePack: (state, action: PayloadAction<number>) => {
+      state.activePack = action.payload;
+    },
+    duplicatePack: (state, action: PayloadAction<number>) => {
+      const index = action.payload;
+      const duplicatedState = [...state.formattedIngredients];
+      const duplicateFrom = { ...duplicatedState[index] };
+      duplicatedState.push(duplicateFrom);
+      state.formattedIngredients = duplicatedState;
     }
   }
 });
