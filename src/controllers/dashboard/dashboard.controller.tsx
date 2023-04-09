@@ -70,7 +70,7 @@ const Dashboard = () => {
           price={getPrice()}
         />
       </Grid>
-      <OrderSummary isOpen={isOpen} onClose={onClose} />
+      {isOpen ? <OrderSummary isOpen={isOpen} onClose={onClose} /> : null}
     </Box>
   );
 };

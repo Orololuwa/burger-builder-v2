@@ -1,5 +1,7 @@
 import { useAppDispatch, useAppSelector } from "core/hooks/use-redux";
 import { IngredientType } from "lib/helpers/ingredient";
+import { IObjectGeneric } from "models/base";
+import { IIngredientObject } from "models/ingredient";
 import { useMemo } from "react";
 import { getAllIngredients } from "store/action-creators/ingredient.action";
 import { ingredientActions } from "store/reducers/ingredient.reducers";
@@ -18,12 +20,51 @@ export const useIngredients = () => {
     dispatch(getAllIngredients());
   };
 
+  const getPrice = (ingredient: IObjectGeneric<IIngredientObject>) => {
+    return Object.values(ingredient).reduce(
+      (acc: number, curr) => acc + curr.count * parseFloat(curr.price),
+      0
+    );
+  };
+
+  const getTotalPrice = () => {
+    return formattedIngredients.reduce(
+      (acc, ingredient) => acc + getPrice(ingredient),
+      0
+    );
+  };
+
   const ingredientAdded = (name: IngredientType, index: number) => {
     dispatch(ingredientActions.increaseIngredientCount({ name, index }));
   };
 
-  const ingredientRemoved = (name: IngredientType, index: number) => {
+  const ingredientRemoved = (
+    name: IngredientType,
+    index: number,
+    options?: Partial<{ callBack: () => void }>
+  ) => {
     dispatch(ingredientActions.decreaseIngredientCount({ name, index }));
+    const ingredient = formattedIngredients[index];
+    if (
+      formattedIngredients.length > 1 &&
+      getPrice(ingredient) ===
+        parseFloat(ingredient[name].price) +
+          parseFloat(ingredient[IngredientType.BREAD_TOP].price) +
+          parseFloat(ingredient[IngredientType.BREAD_BOTTOM].price)
+    ) {
+      deletePack(index);
+    }
+    if (
+      formattedIngredients.length === 1 &&
+      getPrice(ingredient) ===
+        parseFloat(ingredient[name].price) +
+          parseFloat(ingredient[IngredientType.BREAD_TOP].price) +
+          parseFloat(ingredient[IngredientType.BREAD_BOTTOM].price)
+    ) {
+      if (options && options.callBack) {
+        options.callBack();
+      }
+    }
   };
 
   const setActivePack = (packNumber: number) => {
@@ -42,9 +83,15 @@ export const useIngredients = () => {
     return formattedIngredients.length > 1;
   }, [formattedIngredients.length]);
 
+  const resetOrder = () => {
+    dispatch(ingredientActions.resetOrder());
+    dispatch(getAllIngredients());
+  };
+
   return {
     dispatchAllIngredients,
     ingredients: ingredients.data,
+    getTotalPrice,
     ingredientAdded,
     ingredientRemoved,
     formattedIngredients,
@@ -52,6 +99,7 @@ export const useIngredients = () => {
     setActivePack,
     duplicatePack,
     deletePack,
-    IsDeletable
+    IsDeletable,
+    resetOrder
   };
 };

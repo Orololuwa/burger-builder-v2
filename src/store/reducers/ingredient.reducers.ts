@@ -32,11 +32,11 @@ export const IngredientSlice = createSlice({
               curr.name === IngredientType.BREAD_BOTTOM
                 ? 1
                 : 0,
-            price: curr.price,
             visible: !(
               curr.name === IngredientType.BREAD_TOP ||
               curr.name === IngredientType.BREAD_BOTTOM
-            )
+            ),
+            ...curr
           };
 
           return accumulator;
@@ -87,6 +87,10 @@ export const IngredientSlice = createSlice({
       if (state.formattedIngredients.length > 1) {
         state.formattedIngredients = duplicatedState;
       }
+    },
+    resetOrder: (state) => {
+      state.formattedIngredients = [{}];
+      state.activePack = 0;
     }
   }
 });

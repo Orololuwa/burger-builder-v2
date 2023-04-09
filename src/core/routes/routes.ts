@@ -12,5 +12,6 @@ export const apiRoutes = {
   SIGN_UP: "/auth/signup",
   PROFILE: "/auth/profile",
   INGREDIENTS: "/menu-item",
-  ADDRESS: "/address"
+  ADDRESS: "/address",
+  ORDERS: "/orders"
 };

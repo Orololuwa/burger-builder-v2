@@ -11,7 +11,6 @@ import {
   DrawerBody,
   DrawerContent,
   DrawerOverlay,
-  Select,
   Stack,
   Text,
   DrawerHeader,
@@ -28,10 +27,12 @@ import { useAppDispatch, useAppSelector } from "core/hooks/use-redux";
 import { Add, ArrowLeft, Minus, Trash } from "iconsax-react";
 import { IngredientType } from "lib/helpers/ingredient";
 import { formatter } from "lib/utils";
-import { BaseModalProps } from "models/base";
+import { BaseModalProps, IObjectGeneric } from "models/base";
 import { useEffect, useState } from "react";
 import addressService from "services/address.service";
+import orderService from "services/order.service";
 import { getAllAddress } from "store/action-creators/address.actions";
+import { ICreateOrder } from "./create-order.dto";
 
 interface Props extends BaseModalProps {}
 
@@ -53,7 +54,6 @@ const initialAddressState = {
 const OrderSummary = ({ isOpen, onClose }: Props) => {
   const dispatch = useAppDispatch();
   const toast = useToast();
-  const profile = useAppSelector((state) => state.auth.profile);
   const addresses = useAppSelector((state) => state.address.allAddress);
   const {
     formattedIngredients,
@@ -62,22 +62,10 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
     setActivePack,
     duplicatePack,
     deletePack,
-    IsDeletable
+    IsDeletable,
+    getTotalPrice,
+    resetOrder
   } = useIngredients();
-
-  const getTotalPrice = () => {
-    return formattedIngredients.reduce(
-      (acc, ingredient) =>
-        acc +
-        Object.values(ingredient).reduce(
-          (acc: number, curr) => acc + curr.count * parseFloat(curr.price),
-          0
-        ),
-      0
-    );
-  };
-
-  const ingredients = formattedIngredients[0];
 
   useEffect(() => {
     dispatch(getAllAddress());
@@ -149,7 +137,49 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
     IDrawerState.CHECKOUT
   );
 
-  const drawerComponents: any = {
+  // Checkout
+  const checkoutHandler = async () => {
+    setLoading(true);
+    try {
+      const CreateOrderBody: ICreateOrder = {
+        price: getTotalPrice(),
+        addressId: +radioValue,
+        ingredients: formattedIngredients
+          .map((ingredients, index) => [
+            ...Object.values(ingredients)
+              .filter((ingredient) => ingredient.count)
+              .map((ingredient) => ({
+                packNumber: index + 1,
+                menuItemId: ingredient.id,
+                pricePurchased: +ingredient.price * ingredient.count,
+                quantity: ingredient.count
+              }))
+          ])
+          .reduce((arr, el) => {
+            return arr.concat(el);
+          }, [])
+      };
+
+      const res = await orderService.createOrder(CreateOrderBody);
+      toast({
+        position: "top",
+        status: "success",
+        description: res.data.message
+      });
+      setLoading(false);
+      onCloseState();
+      resetOrder();
+    } catch (error) {
+      toast({
+        position: "top",
+        status: "error",
+        description: (error as any)?.response?.data?.message || "Error"
+      });
+      setLoading(false);
+    }
+  };
+
+  const drawerComponents: IObjectGeneric<JSX.Element> = {
     [IDrawerState.CHECKOUT]: (
       <DrawerBody>
         <Grid
@@ -219,7 +249,10 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
                           onClick={() =>
                             ingredientRemoved(
                               ingredient as IngredientType,
-                              index
+                              index,
+                              {
+                                callBack: onCloseState
+                              }
                             )
                           }
                         />
@@ -271,60 +304,6 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
                 </Flex>
               </Stack>
             ))}
-            <Divider w="100%" mx="5%" />
-            {Object.keys(ingredients)
-              .filter((ingredient) => ingredients[ingredient].count > 0)
-              .map((ingredient, idx) => (
-                <Flex
-                  alignItems={"center"}
-                  justifyContent="space-between"
-                  key={idx}
-                >
-                  <Text fontWeight={"medium"} textTransform="capitalize">
-                    {`${ingredient.replace("-", " ")} (${
-                      ingredients[ingredient].count
-                    })`}
-                  </Text>
-                  <Heading as={"h4"} fontSize="lg" fontWeight={"bold"}>
-                    &#x20A6;
-                    {`${formatter.format(
-                      parseFloat(ingredients[ingredient].price) *
-                        ingredients[ingredient].count
-                    )}`}
-                  </Heading>
-                </Flex>
-              ))}
-            <Divider w="100%" mx="5%" />
-            <Flex alignItems={"center"} justifyContent="space-between" pb="4">
-              <Text fontWeight={"medium"} textTransform="capitalize">
-                Total
-              </Text>
-              <Heading as={"h4"} fontSize="lg" fontWeight={"bold"}>
-                &#x20A6;
-                {`${formatter.format(getTotalPrice())}`}
-              </Heading>
-            </Flex>
-          </Stack>
-          <Stack bg="primary.500" rounded="lg" spacing={"4"} py="4">
-            <Heading textTransform={"capitalize"} py="2" fontSize={"lg"}>
-              Delivery Details
-            </Heading>
-            <Flex direction={"column-reverse"}>
-              <Text fontWeight={"medium"} textTransform="capitalize">
-                {profile?.data?.name}
-              </Text>
-              <Heading as={"h4"} fontSize="md" fontWeight={"semibold"}>
-                Name
-              </Heading>
-            </Flex>
-            <Flex direction={"column-reverse"}>
-              <Text fontWeight={"medium"} textTransform="capitalize">
-                {profile?.data?.phone}
-              </Text>
-              <Heading as={"h4"} fontSize="md" fontWeight={"semibold"}>
-                Phone
-              </Heading>
-            </Flex>
           </Stack>
 
           <Divider w="100%" />
@@ -359,13 +338,35 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
 
           <Divider w="100%" />
 
-          <FormControl>
-            <FormLabel>Delivery Method</FormLabel>
-            <Select>
-              <option value={"standard"}>Standard</option>
-              <option value={"express"}>Express</option>
-            </Select>
-          </FormControl>
+          <Stack spacing={"2"} pb="10">
+            <Flex alignItems={"center"} justifyContent="space-between">
+              <Text fontWeight={"medium"} textTransform="capitalize">
+                Sub Total
+              </Text>
+              <Heading as={"h4"} fontSize="lg" fontWeight={"normal"}>
+                &#x20A6;
+                {`${formatter.format(getTotalPrice())}`}
+              </Heading>
+            </Flex>
+            <Flex alignItems={"center"} justifyContent="space-between">
+              <Text fontWeight={"medium"} textTransform="capitalize">
+                Delivery Fee
+              </Text>
+              <Heading as={"h4"} fontSize="lg" fontWeight={"normal"}>
+                &#x20A6;
+                {`${formatter.format(500)}`}
+              </Heading>
+            </Flex>
+            <Flex alignItems={"center"} justifyContent="space-between">
+              <Text fontWeight={"medium"} textTransform="capitalize">
+                Total
+              </Text>
+              <Heading as={"h4"} fontSize="lg" fontWeight={"bold"}>
+                &#x20A6;
+                {`${formatter.format(getTotalPrice() + 500)}`}
+              </Heading>
+            </Flex>
+          </Stack>
         </Grid>
         <Box
           pos={"fixed"}
@@ -378,7 +379,14 @@ const OrderSummary = ({ isOpen, onClose }: Props) => {
           zIndex={"sticky"}
           background={"chakra-subtle-bg"}
         >
-          <Button size={"md"} colorScheme="orange" px="6" w={"full"}>
+          <Button
+            size={"md"}
+            colorScheme="orange"
+            px="6"
+            w={"full"}
+            onClick={checkoutHandler}
+            isLoading={loading}
+          >
             Checkout
           </Button>
         </Box>

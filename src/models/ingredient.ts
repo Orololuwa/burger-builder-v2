@@ -12,8 +12,7 @@ export interface IIngredientState {
   activePack: number;
 }
 
-export interface IIngredientObject {
+export interface IIngredientObject extends IIngredient {
   count: number;
-  price: string;
   visible: boolean;
 }
