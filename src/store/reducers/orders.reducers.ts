@@ -7,7 +7,7 @@ const initialState: IOrdersState = {
     loading: false,
     data: [],
     error: "",
-    pagination: initialPagination
+    pagination: { ...initialPagination, pageSize: 5 }
   }
 };
 

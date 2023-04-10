@@ -1,4 +1,5 @@
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
+import { format, parseISO } from "date-fns";
 
 export class LocalStorage {
   static get = (key: string) => {
@@ -117,3 +118,11 @@ export const formatterII = new Intl.NumberFormat("en-US", {
   compactDisplay: "short",
   maximumFractionDigits: 2
 });
+
+export const formatDateToUsersLocale = (date: string) => {
+  return format(parseISO(date), "MMM d, yyyy");
+};
+
+export const formatTimeToUsersLocale = (date: string) => {
+  return format(parseISO(date), "h:mmaaa");
+};
