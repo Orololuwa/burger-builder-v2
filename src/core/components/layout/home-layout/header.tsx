@@ -83,7 +83,7 @@ export default function HeaderNav() {
 
   return (
     <Box
-      bg={useColorModeValue("orange.200", "orange.900")}
+      bg={useColorModeValue("orange.500", "orange.900")}
       px={4}
       position={location.pathname === "/" ? "unset" : "fixed"}
       top="0"

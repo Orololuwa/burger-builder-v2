@@ -30,7 +30,7 @@ import { formatter } from "lib/utils";
 import { BaseModalProps, IObjectGeneric } from "models/base";
 import { useEffect, useState } from "react";
 import addressService from "services/address.service";
-import orderService from "services/order.service";
+import orderService from "services/orders.service";
 import { getAllAddress } from "store/action-creators/address.actions";
 import { ICreateOrder } from "./create-order.dto";
 

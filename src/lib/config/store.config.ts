@@ -13,11 +13,13 @@ import storage from "redux-persist/lib/storage";
 import addressReducers from "store/reducers/address.reducers";
 import authReducers from "store/reducers/auth.reducers";
 import ingredientReducers from "store/reducers/ingredient.reducers";
+import ordersReducers from "store/reducers/orders.reducers";
 
 const rootReducer = combineReducers({
   auth: authReducers,
   ingredient: ingredientReducers,
-  address: addressReducers
+  address: addressReducers,
+  orders: ordersReducers
 });
 
 const persistConfig = {

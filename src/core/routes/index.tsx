@@ -12,6 +12,7 @@ const Dashboard = lazy(
 );
 const SignInPage = lazy(() => import("controllers/auth/signin.controller"));
 const SignUpPage = lazy(() => import("controllers/auth/signup.controller"));
+const Orders = lazy(() => import("controllers/orders/orders.controller"));
 
 const routes: RouteObject[] = [
   {
@@ -24,6 +25,10 @@ const routes: RouteObject[] = [
       {
         element: <Dashboard />,
         path: appRoutes.DASHBOARD
+      },
+      {
+        element: <Orders />,
+        path: appRoutes.ORDERS
       }
     ]
   },

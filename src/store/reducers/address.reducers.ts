@@ -19,7 +19,8 @@ export const AddressSlice = createSlice({
     },
     getAllAddressSuccess: (state, action: PayloadAction<IAddress[]>) => {
       state.allAddress.loading = false;
-      (state.allAddress.error = ""), (state.allAddress.data = action.payload);
+      state.allAddress.error = "";
+      state.allAddress.data = action.payload;
     },
     getAllAddressError: (state, action: PayloadAction<string>) => {
       state.allAddress.loading = false;
