@@ -1,6 +1,6 @@
 import { Box, Grid, useDisclosure } from "@chakra-ui/react";
-import Burger from "core/components/burger/burger";
-import BuildControls from "core/components/burger/controls/build-controls";
+import Burger from "core/components/Burger/burger";
+import BuildControls from "core/components/Burger/controls/build-controls";
 import OrderSummary from "core/components/orders/order-summary";
 import { useIngredients } from "core/hooks/use-ingredients";
 import { IngredientType } from "lib/helpers/ingredient";

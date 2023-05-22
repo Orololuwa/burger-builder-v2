@@ -14,9 +14,12 @@ export interface ILogin {
 
 export interface IUser {
   id: number;
-  name: string;
+  firstName: string;
+  lastName: string;
+  middleName?: string;
   email: string;
   phone: string;
+  password: string;
   role: string;
 }
 

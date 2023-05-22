@@ -13,7 +13,8 @@ import {
   Text,
   useColorModeValue,
   Link as ChakraLink,
-  Select
+  Select,
+  useToast
 } from "@chakra-ui/react";
 import { useCallback, useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
@@ -25,6 +26,17 @@ import { signUpJWT } from "store/action-creators/auth.actions";
 import { ErrorToast } from "core/components/error";
 import { appRoutes } from "core/routes/routes";
 
+interface IState {
+  firstName: string;
+  lastName: string;
+  middleName?: string;
+  email: string;
+  phone: string;
+  password: string;
+  passwordConfirm?: string;
+  role: string;
+}
+
 export default function SignupCard() {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -35,11 +47,14 @@ export default function SignupCard() {
     appRoutes.DASHBOARD;
   const dispatch = useAppDispatch();
   const { loading, error } = useAppSelector((state) => state.auth);
-  const [state, setState] = useState({
+  const [state, setState] = useState<IState>({
     email: "",
     password: "",
     phone: "",
-    name: "",
+    firstName: "",
+    lastName: "",
+    middleName: "",
+    passwordConfirm: "",
     role: "user"
   });
 
@@ -51,11 +66,32 @@ export default function SignupCard() {
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const isDisabled = useCallback(() => isFieldsInvalid(state), [state]);
+  const isDisabled = useCallback(() => {
+    const stateCopy = { ...state };
+    delete stateCopy.middleName;
+
+    return isFieldsInvalid(stateCopy);
+  }, [state]);
+
+  const toast = useToast();
 
   const onSignUp = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    dispatch(signUpJWT(navigate, from, state));
+    if (state.password !== state.passwordConfirm) {
+      return toast({
+        description: "Passwords do not match",
+        status: "error",
+        position: "top",
+        variant: "subtle"
+      });
+    }
+
+    const data = { ...state };
+    delete data?.passwordConfirm;
+
+    if (!data.middleName) delete data.middleName;
+
+    dispatch(signUpJWT(navigate, from, data));
   };
 
   return (
@@ -83,30 +119,48 @@ export default function SignupCard() {
           <Stack spacing={4}>
             <HStack>
               <Box>
-                <FormControl id="name" isRequired>
-                  <FormLabel>Name</FormLabel>
+                <FormControl id="first_name" isRequired>
+                  <FormLabel>First Name</FormLabel>
                   <Input
                     type="text"
-                    name="name"
-                    value={state.name}
+                    name="firstName"
+                    value={state.firstName}
                     onChange={onChange}
                   />
                 </FormControl>
               </Box>
               <Box>
-                <FormControl id="email" isRequired>
-                  <FormLabel>Email</FormLabel>
+                <FormControl id="last_name" isRequired>
+                  <FormLabel>Last Name</FormLabel>
                   <Input
-                    type="email"
-                    name="email"
-                    value={state.email}
+                    type="text"
+                    name="lastName"
+                    value={state.lastName}
                     onChange={onChange}
                   />
                 </FormControl>
               </Box>
             </HStack>
-            <FormControl id="tel" isRequired>
-              <FormLabel>Phone Number</FormLabel>
+            <FormControl id="middle_name">
+              <FormLabel>Middle Name</FormLabel>
+              <Input
+                type="text"
+                name="middleName"
+                value={state.middleName}
+                onChange={onChange}
+              />
+            </FormControl>
+            <FormControl id="email" isRequired>
+              <FormLabel>Email</FormLabel>
+              <Input
+                type="email"
+                name="email"
+                value={state.email}
+                onChange={onChange}
+              />
+            </FormControl>
+            <FormControl id="phone" isRequired>
+              <FormLabel>Phone</FormLabel>
               <Input
                 type="tel"
                 name="phone"
@@ -128,6 +182,27 @@ export default function SignupCard() {
                   type={showPassword ? "text" : "password"}
                   name="password"
                   value={state.password}
+                  onChange={onChange}
+                />
+                <InputRightElement h={"full"}>
+                  <Button
+                    variant={"ghost"}
+                    onClick={() =>
+                      setShowPassword((showPassword) => !showPassword)
+                    }
+                  >
+                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+            </FormControl>
+            <FormControl id="password_confirm" isRequired>
+              <FormLabel>Confirm Password</FormLabel>
+              <InputGroup>
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  name="passwordConfirm"
+                  value={state.passwordConfirm}
                   onChange={onChange}
                 />
                 <InputRightElement h={"full"}>
